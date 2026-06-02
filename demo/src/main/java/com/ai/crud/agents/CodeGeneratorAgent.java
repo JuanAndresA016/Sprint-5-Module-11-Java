@@ -34,30 +34,27 @@ public class CodeGeneratorAgent {
 
     private String buildPrompt(String context, String entityDescription) {
         String contextSection = context.isBlank()
-                ? "(No project context provided — use standard Spring Boot conventions)"
+                ? "Use normal Spring Boot conventions."
                 : context;
 
         return """
-                You are a senior Java developer. Use EXACTLY these project conventions:
-                
+                You are a Java developer. Generate a Spring Boot CRUD for
                 %s
                 
-                Generate a complete Spring Boot CRUD implementation for:
+                Here are some conventions to follow:
                 %s
                 
-                IMPORTANT RULES:
-                - Use package com.ai.crud for all classes
-                - Use jakarta.persistence (not javax.persistence)
-                - Return ONLY valid Java code, no explanation text
-                - Separate each file with its exact header marker
-                - Each file must be a complete, compilable Java class
+                Please make sure to:
+                - Use com.ai.crud as the base package
+                - Use jakarta.persistence, not javax.persistence
+                - Only return Java code, no extra text or explanations
                 
-                Return exactly four files using these exact headers:
+                I need exactly four files, use these headers to separate them:
                 === Entity.java ===
                 === Repository.java ===
                 === Service.java ===
                 === Controller.java ===
-                """.formatted(contextSection, entityDescription);
+                """.formatted(entityDescription, contextSection);
     }
 
     private GeneratedCRUD parseResponse(String response) {
@@ -71,10 +68,24 @@ public class CodeGeneratorAgent {
     }
 
     private String extractSection(String response, String marker) {
-        String startMarker = "=== " + marker + " ===";
-        int start = response.indexOf(startMarker);
+        String[] variations = {
+            "=== " + marker + " ===",
+            "===\n" + marker + " ===",
+            "=== " + marker + "\n==="
+        };
+
+        int start = -1;
+        int markerLen = 0;
+        for (String variation : variations) {
+            start = response.indexOf(variation);
+            if (start != -1) {
+                markerLen = variation.length();
+                break;
+            }
+        }
+
         if (start == -1) return "";
-        start += startMarker.length();
+        start += markerLen;
         int end = response.indexOf("===", start);
         if (end == -1) end = response.length();
         return response.substring(start, end).trim();

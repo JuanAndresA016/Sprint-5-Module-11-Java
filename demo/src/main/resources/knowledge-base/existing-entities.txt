@@ -1,0 +1,45 @@
+Existing entity: Customer
+Fields: id (Long), name (String), email (String), phone (String), createdAt (LocalDateTime)
+Package: com.ai.crud.entity
+Table name: customers
+
+Existing entity: Order
+Fields: id (Long), customer (Customer FK), total (BigDecimal), status (Enum: PENDING/SHIPPED/DELIVERED)
+Package: com.ai.crud.entity
+Table name: orders
+
+Existing entity: Student
+Description: Student with name, email and age
+Generated at: 2026-06-01T20:31:51.848964900
+
+Existing entity: Unknown
+Description: Customer entity with id, name and email
+Generated at: 2026-06-01T20:37:45.189404300
+
+Existing entity: Product
+Description: A Product with name (String), price (BigDecimal), category (String) and stockQuantity (Integer)
+Generated at: 2026-06-01T21:52:09.863921500
+
+Existing entity: Invoice
+Description: An Invoice with invoiceNumber (String), issueDate (LocalDate), total (BigDecimal) and isPaid (Boolean)
+Generated at: 2026-06-01T22:05:53.750510300
+
+Existing entity: Invoice
+Description: An Invoice with invoiceNumber (String), issueDate (LocalDate), total (BigDecimal) and isPaid (Boolean)
+Generated at: 2026-06-01T22:08:43.879772500
+
+Existing entity: Product
+Description: A Product with name (String), price (BigDecimal), category (String) and stockQuantity (Integer)
+Generated at: 2026-06-01T22:21:07.881126800
+
+Existing entity: Unknown
+Description: An Employee with firstName (String), lastName (String), salary (BigDecimal) and department (String)
+Generated at: 2026-06-01T22:25:20.194824300
+
+Existing entity: Employee
+Description: An Employee with firstName (String), lastName (String), salary (BigDecimal) and department (String)
+Generated at: 2026-06-01T22:30:47.411573100
+
+Existing entity: Product
+Description: A Product with name (String), price (BigDecimal), category (String) and stockQuantity (Integer)
+Generated at: 2026-06-01T22:37:53.001657

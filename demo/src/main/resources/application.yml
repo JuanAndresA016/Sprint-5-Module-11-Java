@@ -1,0 +1,33 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: crud-generator
+  datasource:
+    url: jdbc:h2:mem:cruddb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+ollama:
+  base-url: http://localhost:11434
+  coding-model: qwen2.5:3b
+  embedding-model: nomic-embed-text
+
+generator:
+  output-dir: src/generated
+  knowledge-base-path: classpath:knowledge-base/
+
+logging:
+  level:
+    com.ai.crud: DEBUG

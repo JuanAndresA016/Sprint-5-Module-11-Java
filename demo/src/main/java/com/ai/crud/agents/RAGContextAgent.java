@@ -26,19 +26,37 @@ public class RAGContextAgent {
     private EmbeddingStore<TextSegment> embeddingStore;
 
     public String retrieveContext(String entityDescription) {
-        log.debug("RAGContextAgent: retrieving context for: '{}'", entityDescription);
 
-        Embedding queryEmbedding = embeddingModel.embed(entityDescription).content();
-        List<EmbeddingMatch<TextSegment>> matches = embeddingStore.findRelevant(queryEmbedding, TOP_K);
+        log.info("========== RAG RETRIEVAL START ==========");
+        log.info("Query: {}", entityDescription);
+
+        Embedding queryEmbedding = embeddingModel
+                .embed(entityDescription)
+                .content();
+
+        List<EmbeddingMatch<TextSegment>> matches =
+                embeddingStore.findRelevant(queryEmbedding, TOP_K);
+
+        log.info("Retrieved {} segments", matches.size());
 
         if (matches.isEmpty()) {
-            log.warn("RAGContextAgent: No relevant segments found.");
+            log.warn("No relevant RAG segments found.");
+            log.info("========== RAG RETRIEVAL END ==========");
             return "";
         }
 
-        matches.forEach(m -> log.debug("  score={} | text='{}'",
-                m.score(),
-                m.embedded().text().substring(0, Math.min(80, m.embedded().text().length()))));
+        int index = 1;
+        for (EmbeddingMatch<TextSegment> match : matches) {
+
+            String text = match.embedded().text();
+
+            log.info("--------------------------------");
+            log.info("Segment #{}", index++);
+            log.info("Score: {}", match.score());
+            log.info("Content:\n{}", text);
+        }
+
+        log.info("========== RAG RETRIEVAL END ==========");
 
         return matches.stream()
                 .map(match -> match.embedded().text())
@@ -46,7 +64,11 @@ public class RAGContextAgent {
     }
 
     public List<EmbeddingMatch<TextSegment>> retrieveMatches(String entityDescription) {
-        Embedding queryEmbedding = embeddingModel.embed(entityDescription).content();
+
+        Embedding queryEmbedding = embeddingModel
+                .embed(entityDescription)
+                .content();
+
         return embeddingStore.findRelevant(queryEmbedding, TOP_K);
     }
 }
