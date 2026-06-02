@@ -1,0 +1,14 @@
+com\ai\crud\agents\CodeGeneratorAgent.class
+com\ai\App.class
+com\ai\crud\config\OllamaConfig.class
+com\ai\crud\agents\TestGeneratorAgent.class
+com\ai\crud\CrudGeneratorApplication.class
+com\ai\crud\agents\RAGContextAgent.class
+com\ai\crud\model\EntitySpec.class
+com\ai\crud\rag\DocumentIngester.class
+com\ai\crud\agents\OrchestratorAgent.class
+com\ai\crud\config\GeneratorController$GenerateRequest.class
+com\ai\crud\config\GeneratorController.class
+com\ai\crud\model\CRUDResult.class
+com\ai\crud\model\GeneratedCRUD.class
+com\ai\crud\rag\VectorStoreService.class

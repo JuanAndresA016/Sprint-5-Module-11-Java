@@ -1,9 +1,0 @@
-Existing entity: Customer
-Fields: id (Long), name (String), email (String), phone (String), createdAt (LocalDateTime)
-Package: com.ai.crud.entity
-Table name: customers
-
-Existing entity: Order
-Fields: id (Long), customer (Customer FK), total (BigDecimal), status (Enum: PENDING/SHIPPED/DELIVERED)
-Package: com.ai.crud.entity
-Table name: orders

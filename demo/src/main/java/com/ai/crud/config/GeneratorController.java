@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/generator")
 public class GeneratorController {
 
-    private static final Logger log = LoggerFactory.getLogger(GeneratorController.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(GeneratorController.class);
 
     @Autowired
     private OrchestratorAgent orchestrator;
@@ -33,40 +35,111 @@ public class GeneratorController {
     private RAGContextAgent ragAgent;
 
     @PostMapping("/generate")
-    public ResponseEntity<CRUDResult> generate(@RequestBody GenerateRequest req) {
-        if (req.getEntityDescription() == null || req.getEntityDescription().isBlank()) {
-            return ResponseEntity.badRequest().body(CRUDResult.error("entityDescription is required"));
+    public ResponseEntity<CRUDResult> generate(
+            @RequestBody GenerateRequest req
+    ) {
+
+        if (req.getEntityDescription() == null
+                || req.getEntityDescription().isBlank()) {
+
+            return ResponseEntity.badRequest()
+                    .body(CRUDResult.error(
+                            "entityDescription is required"
+                    ));
         }
-        CRUDResult result = orchestrator.generateComplete(req.getEntityDescription());
+
+        CRUDResult result =
+                orchestrator.generateComplete(
+                        req.getEntityDescription()
+                );
+
         return result.isSuccess()
                 ? ResponseEntity.ok(result)
-                : ResponseEntity.internalServerError().body(result);
+                : ResponseEntity.internalServerError()
+                .body(result);
     }
 
     @PostMapping("/generate-no-rag")
-    public ResponseEntity<GeneratedCRUD> generateWithoutRag(@RequestBody GenerateRequest req) {
-        if (req.getEntityDescription() == null || req.getEntityDescription().isBlank()) {
+    public ResponseEntity<GeneratedCRUD> generateWithoutRag(
+            @RequestBody GenerateRequest req
+    ) {
+
+        if (req.getEntityDescription() == null
+                || req.getEntityDescription().isBlank()) {
+
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(codeAgent.generate(req.getEntityDescription(), false));
+
+        return ResponseEntity.ok(
+                codeAgent.generate(
+                        req.getEntityDescription(),
+                        false
+                )
+        );
     }
 
     @GetMapping("/rag-context")
-    public ResponseEntity<Map<String, Object>> getRagContext(@RequestParam String description) {
-        List<EmbeddingMatch<TextSegment>> matches = ragAgent.retrieveMatches(description);
-        List<Map<String, Object>> segments = matches.stream()
-                .map(m -> Map.of("score", m.score(), "text", m.embedded().text()))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(Map.of(
-                "description", description,
-                "segmentsRetrieved", segments.size(),
-                "segments", segments
-        ));
+    public ResponseEntity<Map<String, Object>> getRagContext(
+            @RequestParam String description
+    ) {
+
+        List<EmbeddingMatch<TextSegment>> matches =
+                ragAgent.retrieveMatches(description);
+
+        List<Map<String, Object>> segments =
+                matches.stream()
+                        .map(m -> {
+                            Map<String, Object> segment =
+                                    new HashMap<>();
+
+                            segment.put(
+                                    "score",
+                                    m.score()
+                            );
+
+                            segment.put(
+                                    "text",
+                                    m.embedded().text()
+                            );
+
+                            return segment;
+                        })
+                        .collect(Collectors.toList());
+
+        Map<String, Object> response =
+                new HashMap<>();
+
+        response.put(
+                "description",
+                description
+        );
+
+        response.put(
+                "segmentsRetrieved",
+                segments.size()
+        );
+
+        response.put(
+                "segments",
+                segments
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     public static class GenerateRequest {
+
         private String entityDescription;
-        public String getEntityDescription() { return entityDescription; }
-        public void setEntityDescription(String entityDescription) { this.entityDescription = entityDescription; }
+
+        public String getEntityDescription() {
+            return entityDescription;
+        }
+
+        public void setEntityDescription(
+                String entityDescription
+        ) {
+            this.entityDescription =
+                    entityDescription;
+        }
     }
 }
